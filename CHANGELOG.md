@@ -1,3 +1,7 @@
+### Version 1.0.4
+
+Added support for direct CLI execution when installed globally
+
 ### Version 1.0.0
 
 Initial implementation with full basic capabilities:

@@ -12,6 +12,7 @@ tsc;
 
 echo '';
 echo '> Publishing resources...';
+cp -f $DIR/../src/bin.js $DIR/../dist;
 cp -f $DIR/../README.md $DIR/../dist;
 cp -f $DIR/../CHANGELOG.md $DIR/../dist;
 cp -f $DIR/../LICENSE $DIR/../dist;
