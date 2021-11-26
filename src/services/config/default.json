@@ -1,0 +1,27 @@
+{
+  "author": "ofzza",
+  "year": 2021,
+  "tasks": [
+    {
+      "name": "test-01",
+      "type": "test",
+      "command": "bash",
+      "args": ["./task1.sh"],
+      "value": "Hello world"
+    },
+    {
+      "name": "test-02",
+      "type": "test",
+      "command": "bash",
+      "args": ["./task2.sh"],
+      "value": "123"
+    },
+    {
+      "name": "solution-A",
+      "type": "solution",
+      "command": "bash",
+      "args": ["./task3.sh"],
+      "value": "456"
+    }
+  ]
+}

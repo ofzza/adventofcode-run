@@ -1,0 +1,71 @@
+{
+  // General information
+  "author": "ofzza",
+  "year": 2021,
+
+  // Tasks
+  "tasks": [
+    {
+      "name": "2021-01-T1.1",
+      "type": "test",
+      "command": "bash",
+      "args": ["./test-doesnt-exist.sh"]
+    },
+    {
+      "name": "2021-01-T1.2",
+      "type": "test",
+      "command": "bash",
+      "args": ["./test.sh"],
+      "value": "123"
+    },
+    {
+      "name": "2021-01-T1.3",
+      "type": "test",
+      "command": "bash",
+      "args": ["./test.sh"],
+      "value": "456"
+    },
+    {
+      "name": "2021-01-T1.4",
+      "type": "test",
+      "command": "bash",
+      "args": ["./test.sh"]
+    },
+    {
+      "name": "2021-01-S1",
+      "type": "solution",
+      "command": "bash",
+      "args": ["./test.sh"]
+    },
+    {
+      "name": "2021-01-T2.1",
+      "type": "test",
+      "command": "bash",
+      "args": ["./test.sh"]
+    },
+    {
+      "name": "2021-01-T2.2",
+      "type": "test",
+      "command": "bash",
+      "args": ["./test.sh"]
+    },
+    {
+      "name": "2021-01-T2.3",
+      "type": "test",
+      "command": "bash",
+      "args": ["./test.sh"]
+    },
+    {
+      "name": "2021-01-T2.4",
+      "type": "test",
+      "command": "bash",
+      "args": ["./test.sh"]
+    },
+    {
+      "name": "2021-01-S2",
+      "type": "solution",
+      "command": "bash",
+      "args": ["./test.sh"]
+    }
+  ]
+}

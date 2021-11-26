@@ -1,0 +1,22 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist",
+    "sourceMap": true,
+    "declaration": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "importHelpers": true,
+    "target": "es2017",
+    "typeRoots": ["node_modules/@types"],
+    "resolveJsonModule": true
+  },
+  "include": ["./src/**/*.ts", "!./src/**/*.spec.ts"],
+  "paths": {
+    "entt": ["adventofcode"]
+  }
+}

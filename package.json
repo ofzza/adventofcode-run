@@ -1,0 +1,42 @@
+{
+  "name": "@ofzza/adventofcode",
+  "version": "1.0.0",
+  "description": "Task runner for AdventOfCode.com tasks",
+  "main": "./dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "start": "node . ",
+    "build": "prettier --write . && tsc",
+    "dev": "tsc -w"
+  },
+  "pre-commit": [
+    "build",
+    "test"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ofzza/adventofcode-runner.git"
+  },
+  "keywords": [
+    "adventofcode",
+    "runner"
+  ],
+  "author": "ofzza",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ofzza/adventofcode-runner/issues"
+  },
+  "homepage": "https://github.com/ofzza/adventofcode-runner#readme",
+  "dependencies": {
+    "@types/colors": "^1.2.1",
+    "@types/yargs": "^17.0.7",
+    "colors": "^1.4.0",
+    "yargs": "^17.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.10",
+    "prettier": "^2.5.0",
+    "tslib": "^2.3.1",
+    "typescript": "^4.2.4"
+  }
+}
