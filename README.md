@@ -66,7 +66,8 @@ The created configuration file `./aoc.json` will have the following schema:
       "name": "solution-A",
       "type": "solution",
       "command": "bash",
-      "args": ["./task3.sh"],
+      // Startup arguments can be used to modify arguments sent to a task command
+      "args": ["./task3.sh", "{{verbose??--verbose}}", "{{obfuscate??--obfuscate}}"],
       "value": "456"
     }
 
@@ -96,27 +97,29 @@ The created configuration file `./aoc.json` will have the following schema:
 
 > If custom `--config` is not specified, `./aoc.json` is presumed.
 
-| Description                   | Syntax                                  | Output                          | Explanation                                |
-| ----------------------------- | --------------------------------------- | ------------------------------- | ------------------------------------------ |
-| Run all tasks                 | `$ adventofcode run`                    | ✘ 141ms 123                     | Outputs success, execution time and result |
-|                               |                                         | ✓ 142ms 123                     |                                            |
-|                               |                                         | ✘ 136ms 123                     |                                            |
-|                               |                                         |                                 |                                            |
-| Run cherry picked task(s)     | `$ adventofcode run -t 1 -t 3`          | ✘ 141ms 123                     | Only runs 1st and 3rd tasks                |
-|                               |                                         | ✘ 136ms 123                     |                                            |
-|                               |                                         |                                 |                                            |
-| Ran tasks by name             | `$ adventofcode run -n test`            | ✘ 141ms 123                     | Runs tasks with names starting with "test" |
-|                               |                                         | ✓ 142ms 123                     |                                            |
-|                               |                                         |                                 |                                            |
-| Run tasks by type             | `$ adventofcode run -p solution`        | ✘ 136ms 123                     | Runs tasks with type "solution"            |
-|                               |                                         |                                 |                                            |
-| Runs tasks from custom config | `$ adventofcode run -c ./dir/conf.json` | ✘ 141ms 123                     | Runs from custom config                    |
-|                               |                                         | ✓ 142ms 123                     |                                            |
-|                               |                                         | ✘ 136ms 123                     |                                            |
-|                               |                                         |                                 |                                            |
-| Runs tasks verbosely          | `$ adventofcode run -v`                 | [Verbose output with summary]   | Runs with verbose output                   |
-|                               |                                         |                                 |                                            |
-| Run tasks with fully piped    | `$ adventofcode run -v -o`              | [Verbose output with summary]   | Runs with full stdout piped to output      |
-| stdout output                 |                                         | [and full stdout piped through] |                                            |
+| Description                     | Syntax                                  | Output                           | Explanation                                |
+| ------------------------------- | --------------------------------------- | -------------------------------- | ------------------------------------------ |
+| Run all tasks                   | `$ adventofcode run`                    | ✘ 141ms 123                      | Outputs success, execution time and result |
+|                                 |                                         | ✓ 142ms 123                      |                                            |
+|                                 |                                         | ✘ 136ms 123                      |                                            |
+|                                 |                                         |                                  |                                            |
+| Run cherry picked task(s)       | `$ adventofcode run -t 1 -t 3`          | ✘ 141ms 123                      | Only runs 1st and 3rd tasks                |
+|                                 |                                         | ✘ 136ms 123                      |                                            |
+|                                 |                                         |                                  |                                            |
+| Ran tasks by name               | `$ adventofcode run -n test`            | ✘ 141ms 123                      | Runs tasks with names starting with "test" |
+|                                 |                                         | ✓ 142ms 123                      |                                            |
+|                                 |                                         |                                  |                                            |
+| Run tasks by type               | `$ adventofcode run -p solution`        | ✘ 136ms 123                      | Runs tasks with type "solution"            |
+|                                 |                                         |                                  |                                            |
+| Runs tasks from custom config   | `$ adventofcode run -c ./dir/conf.json` | ✘ 141ms 123                      | Runs from custom config                    |
+|                                 |                                         | ✓ 142ms 123                      |                                            |
+|                                 |                                         | ✘ 136ms 123                      |                                            |
+|                                 |                                         |                                  |                                            |
+| Runs tasks verbosely            | `$ adventofcode run -v`                 | [Verbose output with summary]    | Runs with verbose output                   |
+|                                 |                                         |                                  |                                            |
+| Runs tasks and obfuscate result | `$ adventofcode run -b`                 | [Obfuscated output with summary] | Runs with obfuscated output                |
+|                                 |                                         |                                  |                                            |
+| Run tasks with fully piped      | `$ adventofcode run -v -o`              | [Verbose output with summary]    | Runs with full stdout piped to output      |
+| stdout output                   |                                         | [and full stdout piped through]  |                                            |
 
 > If custom `--config` is not specified, `./aoc.json` is presumed.

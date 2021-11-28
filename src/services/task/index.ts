@@ -26,14 +26,18 @@ export class Task implements TTaskConfiguration {
 
   /**
    * Runs requested tasks
-   * @param tasks Array of tasks to run
+   * @param argv Startup arguments
    * @param name Start of name of task(s) to run
    * @param type Type of tasks to run
    */
-  public static *run({ tasks = [] as number[], name = '' as string, type = '' as string } = {}): Generator<TaskResult> {
+  public static *run(argv: Record<string, string | string[]>): Generator<TaskResult> {
+    // Get filters
+    const tasks = argv.task instanceof Array ? argv.task.map(task => parseInt(task)) : argv.task ? [parseInt(argv.task)] : [];
+    const type = argv.type as string;
+    const name = argv.name as string;
     // Filter tasks to execute
     for (const task of Task.get({ tasks, type, name })) {
-      yield task.run();
+      yield task.run(argv);
     }
   }
 
@@ -55,14 +59,33 @@ export class Task implements TTaskConfiguration {
   /**
    * Execute task
    * @returns Task execution result
+   * @param argv Startup arguments
    */
-  public run(): TaskResult {
+  public run(argv: Record<string, string | string[]>): TaskResult {
     const start = Date.now();
     try {
       // Run task and time task execution
+      this.args = this.args.map(arg => {
+        return arg.replace(/\{\{(.*?)\}\}/g, match => {
+          const expr = match.substr(2, match.length - 4);
+          if (expr.startsWith('verbose')) {
+            return argv.verbose ? expr.split('??')[1] : '';
+          } else if (expr.startsWith('obfuscate')) {
+            return argv.obfuscate ? expr.split('??')[1] : '';
+          } else {
+            return match;
+          }
+        });
+      });
+      // TODO: Replace .execSync with async and stream stdout as it comes in ...
       const out = execSync(`${this.command} ${this.args.join(' ')}`, { cwd: Configuration.cwd, stdio: [null, null] }).toString();
       // Return execution result
-      return new TaskResult(this, Date.now() - start, out.trim().split('\n').slice(-1)[0], out);
+      const result = out
+        .replace(/\[.*?m/g, '')
+        .trim()
+        .split('\n')
+        .slice(-1)[0];
+      return new TaskResult(this, Date.now() - start, result, out);
     } catch (err) {
       // Return execution result
       return new TaskResult(this, Date.now() - start, err);

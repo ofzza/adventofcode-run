@@ -69,12 +69,19 @@ yargs(process.argv.slice(2))
     'Run all runnable tasks',
     // Additional command options
     yargs =>
-      yargs.option('output', {
-        alias: 'o',
-        type: 'boolean',
-        describe: 'Pipes everything from the task being run',
-        default: false,
-      }),
+      yargs
+        .option('output', {
+          alias: 'o',
+          type: 'boolean',
+          describe: 'Pipes everything from the task being run',
+          default: false,
+        })
+        .option('obfuscate', {
+          alias: 'b',
+          type: 'boolean',
+          describe: 'Obfuscate result',
+          default: false,
+        }),
     async (argv: Record<string, string | string[]>) => {
       // Load and output configuration
       configInit(argv);
@@ -153,15 +160,11 @@ function printTaskList(argv: Record<string, string | string[]>) {
 
 /**
  * Executes requested task
- * @param argv
+ * @param argv Startup arguments
  */
 function runTasks(argv: Record<string, string | string[]>) {
   // Initialize task runner
-  const runner = Task.run({
-    tasks: argv.task instanceof Array ? argv.task.map(task => parseInt(task)) : argv.task ? [parseInt(argv.task)] : [],
-    type: argv.type as string,
-    name: argv.name as string,
-  });
+  const runner = Task.run(argv);
 
   // Run tasks and output result
   const results: TaskResult[] = [];
@@ -171,14 +174,19 @@ function runTasks(argv: Record<string, string | string[]>) {
     // Verbose output
     if (!!argv.verbose) {
       console.log(taskToString(results.length, result.task));
-      console.log(resultToString(result, !!argv.output));
+      console.log(resultToString(result, !!argv.output, !!argv.obfuscate));
       console.log();
     }
     // Non verbose output
     else {
+      // Task execution output
+      if (argv.output && result.output) {
+        const obfuscatedOutput = !argv.obfuscate ? result.output : result.output.replace(new RegExp(result.value.toString(), 'g'), '*****');
+        console.log(['', '', ...obfuscatedOutput.trim().split('\n')].join('\n').blue);
+      }
       console.log(
         `${result.isValid === undefined ? '?' : result.isValid ? '✓'.green : '✘'.red} ${result.time}ms ${
-          result.value instanceof Error ? result.value.message.replace(/\n/g, ' \\n ') : result.value
+          result.value instanceof Error ? result.value.message.replace(/\n/g, ' \\n ') : !argv.obfuscate ? result.value : '*****'
         }`,
       );
     }
@@ -245,9 +253,11 @@ function taskToString(i, task: TTaskConfiguration) {
  * Composes a string representation of a task execution result
  * @param result Result instance
  * @param output If full output should be displayed
+ * @param obfuscate If result output should be obfuscated
  * @returns String representation of a task execution result
  */
-function resultToString(result: TaskResult, output = false) {
+function resultToString(result: TaskResult, output = false, obfuscate = false) {
+  const obfuscatedOutput = !obfuscate ? result.output : result.output.replace(new RegExp(result.value.toString(), 'g'), '*****');
   return [
     // Task execution result
     '- executed in:   '.gray,
@@ -257,11 +267,11 @@ function resultToString(result: TaskResult, output = false) {
     result.isError
       ? `${(result.value as Error).message.replace(/\n/g, ' \\n ')}`.red
       : [
-          `${result.value}`[result.isValid === undefined ? 'white' : result.isValid ? 'green' : 'red'],
-          result.isValid === false ? `\n  expected:      ${result.task.value}`.gray : '',
+          `${!obfuscate ? result.value : '*****'}`[result.isValid === undefined ? 'white' : result.isValid ? 'green' : 'red'],
+          result.isValid === false ? `\n  expected:      ${!obfuscate ? result.task.value : '*****'}`.gray : '',
         ].join(''),
 
     // Task execution output
-    ...(output && result.output ? ['', '', ...result.output.trim().split('\n')].join('\n').blue : ''),
+    ...(output && result.output ? ['', '', ...obfuscatedOutput.trim().split('\n')].join('\n').blue : ''),
   ].join('');
 }
