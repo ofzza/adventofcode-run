@@ -3,6 +3,7 @@
 - Added support for `--obfuscate` argument
 - Added support for passing conditional command arguments: `{{verbose??--verbose}}`
 - Clearing coloring from task output before validating as result
+- Enabled streaming of execution output from stdout
 
 ### Version 1.0.4
 

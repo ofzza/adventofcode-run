@@ -162,28 +162,50 @@ function printTaskList(argv: Record<string, string | string[]>) {
  * Executes requested task
  * @param argv Startup arguments
  */
-function runTasks(argv: Record<string, string | string[]>) {
+async function runTasks(argv: Record<string, string | string[]>) {
   // Initialize task runner
-  const runner = Task.run(argv);
+  const runner = Task.run(argv, text => {
+    if (argv.output) {
+      const obfuscatedOutput = text;
+      console.log([...obfuscatedOutput.trim().split('\n')].join('\n').blue);
+    }
+  });
 
   // Run tasks and output result
   const results: TaskResult[] = [];
-  for (const result of runner) {
+  while (true) {
+    // Get task being run
+    const stepA = await runner.next();
+    if (stepA.done) break;
+    const task = stepA.value;
+
+    // Output task info
+    if (!!argv.verbose) {
+      console.log(taskToString(results.length, task));
+    }
+
+    // Run task
+    if (argv.output) {
+      console.log();
+    }
+    const stepB = await runner.next();
+    if (argv.output) {
+      console.log();
+    }
+    if (stepB.done) break;
+    const result = stepB.value;
+
     // Store result
     results.push(result);
-    // Verbose output
+
+    // Verbose output of result
     if (!!argv.verbose) {
-      console.log(taskToString(results.length, result.task));
       console.log(resultToString(result, !!argv.output, !!argv.obfuscate));
       console.log();
     }
-    // Non verbose output
+    // Non verbose output of result
     else {
       // Task execution output
-      if (argv.output && result.output) {
-        const obfuscatedOutput = !argv.obfuscate ? result.output : result.output.replace(new RegExp(result.value.toString(), 'g'), '*****');
-        console.log(['', '', ...obfuscatedOutput.trim().split('\n')].join('\n').blue);
-      }
       console.log(
         `${result.isValid === undefined ? '?' : result.isValid ? '✓'.green : '✘'.red} ${result.time}ms ${
           result.value instanceof Error ? result.value.message.replace(/\n/g, ' \\n ') : !argv.obfuscate ? result.value : '*****'
@@ -270,8 +292,5 @@ function resultToString(result: TaskResult, output = false, obfuscate = false) {
           `${!obfuscate ? result.value : '*****'}`[result.isValid === undefined ? 'white' : result.isValid ? 'green' : 'red'],
           result.isValid === false ? `\n  expected:      ${!obfuscate ? result.task.value : '*****'}`.gray : '',
         ].join(''),
-
-    // Task execution output
-    ...(output && result.output ? ['', '', ...obfuscatedOutput.trim().split('\n')].join('\n').blue : ''),
   ].join('');
 }
