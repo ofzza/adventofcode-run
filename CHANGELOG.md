@@ -1,3 +1,11 @@
+### Version 1.0.7
+
+- Additional console output formatting tweaks
+
+### Version 1.0.6
+
+- Task stdout to console formatting tweaks
+
 ### Version 1.0.5
 
 - Added support for `--obfuscate` argument

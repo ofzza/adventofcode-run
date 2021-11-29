@@ -229,7 +229,7 @@ async function runTasks(argv: Record<string, string | string[]>) {
   };
   // Output stats
   if (!!argv.verbose) {
-    console.log(`--------------------------------------------------------------`.gray);
+    console.log(`--------------------------------------------------------------`.white);
     console.log();
     console.log(
       [
@@ -263,11 +263,13 @@ async function runTasks(argv: Record<string, string | string[]>) {
  */
 function taskToString(i, task: TTaskConfiguration) {
   return [
-    `${i.toString().padStart(3, '0')}. ${task.name}, `.gray,
-    `${task.type} `.gray,
-    `(`.gray,
-    `${task.command} ${task.args?.join(' ')}`.white,
-    `)`.gray,
+    `${`${i.toString()}.`.padEnd(4, ' ')}`.blue,
+    ` | `.gray,
+    `${task.name}`.white,
+    ` | `.gray,
+    `${task.type}`.white,
+    ` | $ `.gray,
+    `${task.command} ${task.args?.join(' ')}`.gray,
   ].join('');
 }
 
