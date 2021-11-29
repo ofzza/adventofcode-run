@@ -167,7 +167,7 @@ async function runTasks(argv: Record<string, string | string[]>) {
   const runner = Task.run(argv, text => {
     if (argv.output) {
       const obfuscatedOutput = text;
-      console.log([...obfuscatedOutput.trim().split('\n')].join('\n').blue);
+      console.log([...obfuscatedOutput.trim().split('\n')].join('\n').dim.italic);
     }
   });
 
@@ -186,11 +186,11 @@ async function runTasks(argv: Record<string, string | string[]>) {
 
     // Run task
     if (argv.output) {
-      console.log();
+      console.log('~~~ task output ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'.blue);
     }
     const stepB = await runner.next();
     if (argv.output) {
-      console.log();
+      console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'.blue);
     }
     if (stepB.done) break;
     const result = stepB.value;
