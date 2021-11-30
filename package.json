@@ -1,9 +1,9 @@
 {
   "name": "@ofzza/adventofcode",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Task runner for AdventOfCode.com tasks",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./index.js",
+  "types": "./index.d.ts",
   "bin": {
     "adventofcode": "./bin.js"
   },
