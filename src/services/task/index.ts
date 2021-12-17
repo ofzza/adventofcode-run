@@ -76,20 +76,31 @@ export class Task implements TTaskConfiguration {
   }
 
   /**
+   * Gets high resolution time in [ms]
+   * @returns High resolution time in [ms]
+   */
+  private getHRTime(): number {
+    const time = process.hrtime();
+    return time[0] * 1000 + time[1] / 1e6;
+  }
+
+  /**
    * Execute task
    * @returns Task execution result
    * @param stdoutCallback Callback function called on every stdout event
    */
   public async run(stdoutCallback: (text: string) => void): Promise<TaskResult> {
     // Run task and time task execution
-    const start = Date.now();
+    const time = this.getHRTime();
+    let timeSpawned: number = time;
+    let timeStd: number = time;
     try {
       // Run command async and stream stdout and stderr
       const out = await new Promise<Error | string>(resolve => {
         try {
           let out = '';
           let err = '';
-          const process = spawn(
+          const proc = spawn(
             // Command
             this.command,
             // Command arguments
@@ -97,15 +108,20 @@ export class Task implements TTaskConfiguration {
             // Process options
             { cwd: Configuration.cwd },
           );
-          process.stdout.on('data', (data: string) => {
+          proc.on('spawn', () => {
+            timeSpawned = this.getHRTime();
+          });
+          proc.stdout.on('data', (data: string) => {
             out += data.toString();
             stdoutCallback(data.toString());
+            timeStd = this.getHRTime();
           });
-          process.stderr.on('data', (data: string) => {
+          proc.stderr.on('data', (data: string) => {
             err += data.toString();
             stdoutCallback(data.toString());
+            timeStd = this.getHRTime();
           });
-          process.on('exit', () => {
+          proc.on('exit', () => {
             resolve(out || new Error(err));
           });
         } catch (err) {
@@ -122,10 +138,10 @@ export class Task implements TTaskConfiguration {
               .trim()
               .split('\n')
               .slice(-1)[0];
-      return new TaskResult(this, Date.now() - start, result, out instanceof Error ? out.message : out);
+      return new TaskResult(this, timeStd - timeSpawned, result, out instanceof Error ? out.message : out);
     } catch (err) {
       // Return execution result
-      return new TaskResult(this, Date.now() - start, err);
+      return new TaskResult(this, timeStd - timeSpawned, err);
     }
   }
 }

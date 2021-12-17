@@ -1,6 +1,6 @@
 {
   "name": "@ofzza/adventofcode",
-  "version": "1.0.8",
+  "version": "1.0.10",
   "description": "Task runner for AdventOfCode.com tasks",
   "main": "./index.js",
   "types": "./index.d.ts",

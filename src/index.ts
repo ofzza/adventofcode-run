@@ -207,7 +207,7 @@ async function runTasks(argv: Record<string, string | string[]>) {
     else {
       // Task execution output
       console.log(
-        `${result.isValid === undefined ? '?' : result.isValid ? '✓'.green : '✘'.red} ${result.time}ms ${
+        `${result.isValid === undefined ? '?' : result.isValid ? '✓'.green : '✘'.red} ${result.time.toFixed(3)}ms ${
           result.value instanceof Error ? result.value.message.replace(/\n/g, ' \\n ') : !argv.obfuscate ? result.value : '*****'
         }`,
       );
@@ -236,21 +236,21 @@ async function runTasks(argv: Record<string, string | string[]>) {
         `Executed `.gray,
         `${stats.error.length + stats.invalid.length + stats.valid.length + stats.unknown.length}`,
         ` tasks in `.gray,
-        `${times.error + times.invalid + times.valid + times.unknown} ms`,
+        `${(times.error + times.invalid + times.valid + times.unknown).toFixed(3)} ms`,
         `:`.gray,
       ].join(''),
     );
     if (stats.error.length) {
-      console.log(['- '.gray, '✘ Error   '.red, `| Executed `.gray, `${stats.error.length}`, ` tasks in `.gray, `${times.error} ms`].join(''));
+      console.log(['- '.gray, '✘ Error   '.red, `| Executed `.gray, `${stats.error.length}`, ` tasks in `.gray, `${times.error.toFixed(3)} ms`].join(''));
     }
     if (stats.invalid.length) {
-      console.log(['- '.gray, '✘ Invalid '.red, `| Executed `.gray, `${stats.invalid.length}`, ` tasks in `.gray, `${times.invalid} ms`].join(''));
+      console.log(['- '.gray, '✘ Invalid '.red, `| Executed `.gray, `${stats.invalid.length}`, ` tasks in `.gray, `${times.invalid.toFixed(3)} ms`].join(''));
     }
     if (stats.valid.length) {
-      console.log(['- '.gray, '✓ Valid   '.green, `| Executed `.gray, `${stats.valid.length}`, ` tasks in `.gray, `${times.valid} ms`].join(''));
+      console.log(['- '.gray, '✓ Valid   '.green, `| Executed `.gray, `${stats.valid.length}`, ` tasks in `.gray, `${times.valid.toFixed(3)} ms`].join(''));
     }
     if (stats.unknown.length) {
-      console.log(['- '.gray, '? Unknown ', `| Executed `.gray, `${stats.unknown.length}`, ` tasks in `.gray, `${times.unknown} ms`].join(''));
+      console.log(['- '.gray, '? Unknown ', `| Executed `.gray, `${stats.unknown.length}`, ` tasks in `.gray, `${times.unknown.toFixed(3)} ms`].join(''));
     }
   }
 }
@@ -285,7 +285,7 @@ function resultToString(result: TaskResult, output = false, obfuscate = false) {
   return [
     // Task execution result
     '- executed in:   '.gray,
-    `${result.time} ms `.white,
+    `${result.time.toFixed(3)} ms `.white,
     '\n',
     '- result:        '.gray,
     result.isError

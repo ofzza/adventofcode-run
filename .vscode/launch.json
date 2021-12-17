@@ -6,6 +6,7 @@
   "configurations": [
     {
       "name": "Execute runner",
+      "preLaunchTask": "build",
       "cwd": "${workspaceFolder}/example",
       "program": "${workspaceFolder}/dist/index.js",
       "args": ["run", "-c", "./aoc.json", "-v", "-o"],

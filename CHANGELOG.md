@@ -1,3 +1,7 @@
+### Version 1.0.10
+
+- Making timing more precise by not counting process spawning time
+
 ### Version 1.0.7
 
 - Additional console output formatting tweaks
