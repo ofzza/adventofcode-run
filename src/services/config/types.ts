@@ -21,4 +21,6 @@ export interface TTaskConfiguration {
   args?: string[];
   // Valid result
   value?: string;
+  // Multiple runs configuration
+  runs?: Record<string, string>[];
 }

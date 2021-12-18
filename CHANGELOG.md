@@ -1,3 +1,9 @@
+### Version 1.1.2
+
+- Adding support for multiple runs of the same task
+- During multiple runs of a task, dynamic arguments can reference properties defined in the current run configuration
+- Updated README.md
+
 ### Version 1.0.10
 
 - Making timing more precise by not counting process spawning time

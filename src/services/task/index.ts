@@ -38,25 +38,34 @@ export class Task implements TTaskConfiguration {
     const name = argv.name as string;
     // Filter tasks to execute
     for (const task of Task.get({ tasks, type, name })) {
-      // Process task arguments
-      task.args = task.args.map(arg => {
-        return arg.replace(/\{\{(.*?)\}\}/g, match => {
-          const expr = match.substr(2, match.length - 4);
-          if (expr.startsWith('verbose')) {
-            return argv.verbose ? expr.split('??')[1] : '';
-          } else if (expr.startsWith('obfuscate')) {
-            return argv.obfuscate ? expr.split('??')[1] : '';
-          } else {
-            return match;
-          }
+      // Compose and run multiple runs of the task
+      let taskRuns = !task.runs ? [task] : task.runs.map(run => new Task({ ...task, ...run }, run));
+      for (const taskRun of taskRuns) {
+        // Process dynamic task arguments
+        taskRun.args = taskRun.args.map(arg => {
+          return arg.replace(/\{\{(.*?)\}\}/g, match => {
+            // Parse dynamic argument
+            const expr = match.substr(2, match.length - 4);
+            const parsed = expr.split('??');
+            const condition = parsed.length > 1 ? parsed[0] : undefined;
+            const syntax = parsed.length > 1 ? parsed[1] : parsed[0];
+            // Check if argument enabled
+            if (!condition || argv[condition] !== undefined || taskRun.custom[condition] !== undefined || taskRun[condition] !== undefined) {
+              // Replace argument with processed version
+              return syntax
+                .split(' ')
+                .map(s => (!s.startsWith(':') ? s : argv[s.substr(1)] || taskRun.custom[s.substr(1)] || taskRun[s.substr(1)]))
+                .join(' ');
+            }
+          });
         });
-      });
 
-      // Yield task
-      yield await task;
+        // Yield task
+        yield await taskRun;
 
-      // Execute task and yield result
-      yield await task.run(stdoutCallback);
+        // Execute task and yield result
+        yield await taskRun.run(stdoutCallback);
+      }
     }
   }
 
@@ -65,14 +74,18 @@ export class Task implements TTaskConfiguration {
   public command: string;
   public args?: string[];
   public value?: string;
+  public runs?: Record<string, string>[];
+  private custom?: Record<string, string>;
 
-  constructor(task: TTaskConfiguration) {
+  constructor(task: TTaskConfiguration, custom: Record<string, string> = {}) {
     // Set properties
     this.name = task.name;
     this.type = task.type;
     this.command = task.command;
     this.args = task.args;
     this.value = task.value;
+    this.runs = task.runs;
+    this.custom = custom;
   }
 
   /**

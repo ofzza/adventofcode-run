@@ -186,11 +186,11 @@ async function runTasks(argv: Record<string, string | string[]>) {
 
     // Run task
     if (argv.output) {
-      console.log('~~~ task output ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'.blue);
+      console.log(`~~~ task output: "${task.command} ${task.args} "`.padEnd(64, '~').blue);
     }
     const stepB = await runner.next();
     if (argv.output) {
-      console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'.blue);
+      console.log(''.padEnd(64, '~').blue);
     }
     if (stepB.done) break;
     const result = stepB.value;

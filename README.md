@@ -38,37 +38,44 @@ The created configuration file `./aoc.json` will have the following schema:
 
   // Runnable tasks
   "tasks": [
-    // First test task
+    // Test task
     {
-      // Optional task name. Used as a task descriptor and can be used to select which task(s) to run.
       "name": "test-01",
-      // Optional task type. Use any value here, it is used to select which task(s) to run.
       "type": "test",
-      // Command to execute to run the task. All paths are relative to the parent directory of the configuration file.
       "command": "bash",
-      // Optional command arguments to execute the command with. All paths are relative to the parent directory of the configuration file.
-      "args": ["./task1.sh"],
-      // Optional value expected as task result. If provided will count task as valid/invalid.
-      "value": "Hello world"
+      "args": ["./task1.sh"]
     },
 
-    // Second test task
+    // Test task with expected value
     {
       "name": "test-02",
       "type": "test",
       "command": "bash",
       "args": ["./task2.sh"],
-      "value": "123"
+      "value": "Hello world"
     },
 
-    // Third test task
+    // Solution test task with dynamic arguments
     {
       "name": "solution-A",
       "type": "solution",
       "command": "bash",
-      // Startup arguments can be used to modify arguments sent to a task command
-      "args": ["./task3.sh", "{{verbose??--verbose}}", "{{obfuscate??--obfuscate}}"],
-      "value": "456"
+      "args": ["./task3.sh", "--name", "{{:name}}", "{{verbose??--verbose}}", "{{obfuscate??--obfuscate}}"],
+      "value": "Hello world"
+    }
+
+    // Solution task with multiple inputs and expected values
+    {
+      "name": "solution-B",
+      "type": "solution",
+      "command": "bash",
+      "args": ["{{input??:input}}", "--name", "{{:name}}", "{{arg??--some-argument :arg}}"],
+      "runs": [
+        { "name": "solution-B1", "input": "./multi-task.sh", "arg": "1", "value": "Hello world" },
+        { "name": "solution-B2", "input": "./multi-task.sh", "arg": "2", "value": "Hello world" },
+        { "name": "solution-B3", "input": "./multi-task.sh", "arg": "3" },
+        { "name": "solution-B4", "input": "./multi-task.sh", "arg": "4" }
+      ]
     }
 
     // ...
@@ -76,7 +83,58 @@ The created configuration file `./aoc.json` will have the following schema:
 }
 ```
 
-> The `value` optional property of the task definition, will be compared to the last line output by the process being run out to `stdout`. Your program can output debug information, but only the last line will count as the final result.
+#### Configuration properties for each task:
+
+- ##### (Optional) `name`
+
+  Task name. Used as a task descriptor and can be used to select which task(s) to run.
+
+- ##### (Optional) `type`
+
+  Task type. Use any value here, it is used to select which task(s) to run.
+
+- ##### `command`
+
+  Command to execute to run the task. All paths are relative to the parent directory of the configuration file.
+
+- ##### (Optional) `args`
+
+  Command arguments to execute the command with. Arguments can use dynamic argument syntax as described below.
+
+  _Dynamic arguments_:
+
+  Startup arguments, and any property of a configuration can be used to modify arguments sent to a task command as dynamic arguments:
+
+  - Dynamic argument expressions should be placed inside double brackets and are made of a condition and a syntax part (`{{condition??syntax}}`), separated with a `??`, or just the syntax part (`{{syntax}}`).
+
+  - the (optional) condition part specifies a name of the startup argument or configuration property whose existence is used as a condition for the argument being used at all.
+
+  - the syntax part will be used verbatim with the exception of `:variables` which will be replaced with values of startup arguments or configuration properties of the same name as the variable.
+
+  EXAMPLES, following startup arguments execute different dynamic tasks:
+
+  | Startup arguments                                        | Task(s) executed                                           | Expected value |
+  | -------------------------------------------------------- | ---------------------------------------------------------- | -------------- |
+  | `$ adventofcode run -n solution-A`                       | `$ task3.sh --name "solution-A"`                           | `Hello world`  |
+  |                                                          |                                                            |                |
+  | `$ adventofcode run -n solution-A --verbose`             | `$ task3.sh --name "solution-A" --verbose`                 | `Hello world`  |
+  |                                                          |                                                            |                |
+  | `$ adventofcode run -n solution-A --obfuscate`           | `$ task3.sh --name "solution-A" --obfuscate`               | `Hello world`  |
+  |                                                          |                                                            |                |
+  | `$ adventofcode run -n solution-B --verbose --obfuscate` | `$ multi-task.sh --name "solution-B1" --some-argument "1"` | `Hello world`  |
+  |                                                          | `$ multi-task.sh --name "solution-B2" --some-argument "2"` | `Hello world`  |
+  |                                                          | `$ multi-task.sh --name "solution-B3" --some-argument "3"` |                |
+  |                                                          | `$ multi-task.sh --name "solution-B4" --some-argument "4"` |                |
+
+- ##### (Optional) `value`
+
+The `value` optional property of the task definition, will be compared to the last line output by the process being run out to `stdout` to determine the task value as valid or invalid. Your program can output debug information, but only the last line will count as its final result.
+
+- ##### (Optional) `runs`
+
+Definition for multiple runs of the task - on each run, this configuration will be overridden with properties from the run and additional properties can be added
+
+>
 
 ### CLI
 

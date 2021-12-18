@@ -1,9 +1,6 @@
 {
-  // General information
   "author": "ofzza",
   "year": 2021,
-
-  // Tasks
   "tasks": [
     {
       "name": "2021-01-T1.1",
@@ -38,28 +35,16 @@
       "args": ["./test.sh"]
     },
     {
-      "name": "2021-01-T2.1",
+      "name": "2021-01-T2",
       "type": "test",
       "command": "bash",
-      "args": ["./test.sh"]
-    },
-    {
-      "name": "2021-01-T2.2",
-      "type": "test",
-      "command": "bash",
-      "args": ["./test.sh"]
-    },
-    {
-      "name": "2021-01-T2.3",
-      "type": "test",
-      "command": "bash",
-      "args": ["./test.sh"]
-    },
-    {
-      "name": "2021-01-T2.4",
-      "type": "test",
-      "command": "bash",
-      "args": ["./test.sh"]
+      "args": ["./test.sh", "{{custom??--has-custom}}", "{{custom??--custom :custom}}"],
+      "runs": [
+        { "name": "2021-01-T2.1", "custom": "a", "value": "123" },
+        { "name": "2021-01-T2.2", "custom": "b", "value": "456" },
+        { "name": "2021-01-T2.3", "custom": "c" },
+        { "name": "2021-01-T2.4", "custom": "d" }
+      ]
     },
     {
       "name": "2021-01-S2",
